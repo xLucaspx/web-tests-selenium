@@ -1,5 +1,6 @@
 package xlucaspx.base.serenatto;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
@@ -54,11 +55,81 @@ public class AdminPageTest extends BaseTest {
 		var page = new AdminPage(driver);
 
 		page.clickNewType();
-		var confirm = wait.until(ExpectedConditions.alertIsPresent());
-		var text = confirm.getText();
+		var dialog = wait.until(ExpectedConditions.alertIsPresent());
+		var text = dialog.getText();
 
-		confirm.dismiss();
+		dialog.dismiss();
 
 		Assert.assertEquals(text, "Digite o novo tipo:");
+	}
+
+	@Test(testName = "Deve cadastrar um novo tipo")
+	public void testAdmin03() {
+		var page = new AdminPage(driver);
+
+		page.clickNewType();
+		var dialog = wait.until(ExpectedConditions.alertIsPresent());
+		dialog.sendKeys("cerveja");
+		dialog.accept();
+
+		// wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/main/section[3]/table/tbody/tr[6]")));
+		driver.get(driver.getCurrentUrl());
+
+		Assert.assertTrue(driver.getPageSource().contains("<td class=\"table__td\">cerveja</td>"));
+	}
+
+	@Test(testName = "Deve abrir o prompt para editar o tipo selecionado")
+	public void testAdmin04() {
+		var page = new AdminPage(driver);
+
+		page.clickButton("/html/body/main/section[3]/table/tbody/tr[3]/td[4]/button");
+
+		var dialog = wait.until(ExpectedConditions.alertIsPresent());
+		var text = dialog.getText();
+		dialog.dismiss();
+
+		Assert.assertEquals(text, "Digite o novo nome para o tipo \"cerveja\"");
+	}
+
+	@Test(testName = "Deve editar o tipo selecionado")
+	public void testAdmin05() {
+		var page = new AdminPage(driver);
+
+		page.clickButton("/html/body/main/section[3]/table/tbody/tr[3]/td[4]/button");
+
+		var dialog = wait.until(ExpectedConditions.alertIsPresent());
+		dialog.sendKeys("Cervejas");
+		dialog.accept();
+
+		driver.get(driver.getCurrentUrl());
+
+		Assert.assertTrue(driver.getPageSource().contains("<td class=\"table__td\">Cervejas</td>"));
+	}
+
+	@Test(testName = "Deve abrir o prompt para deletar o tipo selecionado")
+	public void testAdmin06() {
+		var page = new AdminPage(driver);
+
+		page.clickButton("/html/body/main/section[3]/table/tbody/tr[3]/td[5]/button");
+
+		var dialog = wait.until(ExpectedConditions.alertIsPresent());
+		var text = dialog.getText();
+		dialog.dismiss();
+
+		Assert.assertEquals(text, "Tem certeza que deseja excluir o tipo \"Cervejas\"?");
+	}
+
+	@Test(testName = "Deve deletar o tipo selecionado")
+	public void testAdmin07() {
+		var page = new AdminPage(driver);
+
+		page.clickButton("/html/body/main/section[3]/table/tbody/tr[3]/td[5]/button");
+
+		var dialog = wait.until(ExpectedConditions.alertIsPresent());
+		dialog.accept();
+
+		driver.get(driver.getCurrentUrl());
+
+		Assert.assertFalse(page.getPageSource().contains("<td class=\"table__td\">Cervejas</td>"));
 	}
 }

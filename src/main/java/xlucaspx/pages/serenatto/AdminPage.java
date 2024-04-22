@@ -1,5 +1,6 @@
 package xlucaspx.pages.serenatto;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -20,6 +21,12 @@ public class AdminPage extends BasePage {
 		this.actions = new Actions(driver);
 	}
 
+	public AdminPage clickButton(String xpath) {
+		var btn = driver.findElement(By.xpath(xpath));
+		actions.moveToElement(btn).click().perform();
+		return this;
+	}
+
 	public AdminPage clickNewProduct() {
 		actions.moveToElement(newProductButton).click().perform();
 		return this;
@@ -28,5 +35,9 @@ public class AdminPage extends BasePage {
 	public AdminPage clickNewType() {
 		actions.moveToElement(newTypeButton).click().perform();
 		return this;
+	}
+
+	public String getPageSource() {
+		return driver.getPageSource();
 	}
 }
